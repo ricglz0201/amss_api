@@ -16,10 +16,10 @@ ActiveRecord::Schema.define(version: 2019_05_04_043017) do
   enable_extension "plpgsql"
 
   create_table "bus_routes", force: :cascade do |t|
-    t.bigint "buses_id"
-    t.bigint "routes_id"
-    t.index ["buses_id"], name: "index_bus_routes_on_buses_id"
-    t.index ["routes_id"], name: "index_bus_routes_on_routes_id"
+    t.bigint "bus_id"
+    t.bigint "route_id"
+    t.index ["bus_id"], name: "index_bus_routes_on_bus_id"
+    t.index ["route_id"], name: "index_bus_routes_on_route_id"
   end
 
   create_table "buses", force: :cascade do |t|
@@ -30,21 +30,21 @@ ActiveRecord::Schema.define(version: 2019_05_04_043017) do
   end
 
   create_table "reservations", force: :cascade do |t|
-    t.bigint "users_id"
-    t.bigint "stops_id"
+    t.bigint "user_id"
+    t.bigint "stop_id"
     t.boolean "bike_seat_reserved"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["stops_id"], name: "index_reservations_on_stops_id"
-    t.index ["users_id"], name: "index_reservations_on_users_id"
+    t.index ["stop_id"], name: "index_reservations_on_stop_id"
+    t.index ["user_id"], name: "index_reservations_on_user_id"
   end
 
   create_table "route_stops", force: :cascade do |t|
-    t.bigint "routes_id"
-    t.bigint "stops_id"
+    t.bigint "route_id"
+    t.bigint "stop_id"
     t.datetime "hour_of_arriving"
-    t.index ["routes_id"], name: "index_route_stops_on_routes_id"
-    t.index ["stops_id"], name: "index_route_stops_on_stops_id"
+    t.index ["route_id"], name: "index_route_stops_on_route_id"
+    t.index ["stop_id"], name: "index_route_stops_on_stop_id"
   end
 
   create_table "routes", force: :cascade do |t|
@@ -54,11 +54,11 @@ ActiveRecord::Schema.define(version: 2019_05_04_043017) do
   end
 
   create_table "seats", force: :cascade do |t|
-    t.bigint "buses_id"
+    t.bigint "bus_id"
     t.integer "seat_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["buses_id"], name: "index_seats_on_buses_id"
+    t.index ["bus_id"], name: "index_seats_on_bus_id"
   end
 
   create_table "stops", force: :cascade do |t|
@@ -69,13 +69,13 @@ ActiveRecord::Schema.define(version: 2019_05_04_043017) do
   end
 
   create_table "trips", force: :cascade do |t|
-    t.bigint "seats_id"
-    t.bigint "reservations_id"
+    t.bigint "seat_id"
+    t.bigint "reservation_id"
     t.datetime "date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["reservations_id"], name: "index_trips_on_reservations_id"
-    t.index ["seats_id"], name: "index_trips_on_seats_id"
+    t.index ["reservation_id"], name: "index_trips_on_reservation_id"
+    t.index ["seat_id"], name: "index_trips_on_seat_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -85,13 +85,13 @@ ActiveRecord::Schema.define(version: 2019_05_04_043017) do
     t.datetime "updated_at", null: false
   end
 
-  add_foreign_key "bus_routes", "buses", column: "buses_id"
-  add_foreign_key "bus_routes", "routes", column: "routes_id"
-  add_foreign_key "reservations", "stops", column: "stops_id"
-  add_foreign_key "reservations", "users", column: "users_id"
-  add_foreign_key "route_stops", "routes", column: "routes_id"
-  add_foreign_key "route_stops", "stops", column: "stops_id"
-  add_foreign_key "seats", "buses", column: "buses_id"
-  add_foreign_key "trips", "reservations", column: "reservations_id"
-  add_foreign_key "trips", "seats", column: "seats_id"
+  add_foreign_key "bus_routes", "buses"
+  add_foreign_key "bus_routes", "routes"
+  add_foreign_key "reservations", "stops"
+  add_foreign_key "reservations", "users"
+  add_foreign_key "route_stops", "routes"
+  add_foreign_key "route_stops", "stops"
+  add_foreign_key "seats", "buses"
+  add_foreign_key "trips", "reservations"
+  add_foreign_key "trips", "seats"
 end
