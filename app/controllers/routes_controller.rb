@@ -1,7 +1,7 @@
 # Controller for routes
 class RoutesController < ApplicationController
   def index
-    @routes = Route.all.include(:buses, :stops)
+    @routes = Route.all.select(:id, :name)
     render json: @routes
   end
 
