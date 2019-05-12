@@ -4,5 +4,8 @@ Rails.application.routes.draw do
     resources :reservations, only: %i[show index create]
   end
 
-  resources :routes, only: %i[show index]
+  resources :routes, only: %i[show index] do
+    resources :buses, only: %i[index]
+    resources :stops, only: %i[index]
+  end
 end
