@@ -14,18 +14,31 @@ class ReservationsController < ApplicationController
   end
 
   def create
-    @reservation = Reservation.new(object_params)
-    if @reservation.save
-      render json: { 'message': 'Success' }
+    trip = find_or_create_trip
+    return render_error('Ya está ocupado') unless trip.reservation.nil?
+
+    if create_reservation(trip)
+      render json: { 'success': 'Reservation created' }
     else
-      puts @reservation.errors
-      render json: { 'error': @reservation.errors }
+      render_error(@res.errors.full_messages)
     end
   end
 
   private
 
-  def object_params
-    params.require(:reservation).permit(:user_id, :stop_id, :trip_id)
+  def find_or_create_trip
+    Trip.where(date: params[:date], seat_id: params[:seat_id]).first_or_create
+  end
+
+  def render_error(error)
+    render json: { 'error': error }
+  end
+
+  def create_reservation(trip)
+    @res = Reservation.new
+    @res.user_id = params[:user_id]
+    @res.stop_id = params[:stop_id]
+    @res.trip_id = trip.id
+    @res.save
   end
 end
