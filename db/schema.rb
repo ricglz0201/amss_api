@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_04_043017) do
+ActiveRecord::Schema.define(version: 2019_05_04_043018) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,10 +32,12 @@ ActiveRecord::Schema.define(version: 2019_05_04_043017) do
   create_table "reservations", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "stop_id"
+    t.bigint "trip_id"
     t.boolean "bike_seat_reserved"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["stop_id"], name: "index_reservations_on_stop_id"
+    t.index ["trip_id"], name: "index_reservations_on_trip_id"
     t.index ["user_id"], name: "index_reservations_on_user_id"
   end
 
@@ -70,11 +72,9 @@ ActiveRecord::Schema.define(version: 2019_05_04_043017) do
 
   create_table "trips", force: :cascade do |t|
     t.bigint "seat_id"
-    t.bigint "reservation_id"
     t.datetime "date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["reservation_id"], name: "index_trips_on_reservation_id"
     t.index ["seat_id"], name: "index_trips_on_seat_id"
   end
 
@@ -88,10 +88,10 @@ ActiveRecord::Schema.define(version: 2019_05_04_043017) do
   add_foreign_key "buses_routes", "buses"
   add_foreign_key "buses_routes", "routes"
   add_foreign_key "reservations", "stops"
+  add_foreign_key "reservations", "trips"
   add_foreign_key "reservations", "users"
   add_foreign_key "routes_stops", "routes"
   add_foreign_key "routes_stops", "stops"
   add_foreign_key "seats", "buses"
-  add_foreign_key "trips", "reservations"
   add_foreign_key "trips", "seats"
 end
