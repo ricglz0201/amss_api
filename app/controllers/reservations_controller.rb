@@ -1,16 +1,18 @@
 # Controller for reservations
 class ReservationsController < ApplicationController
+  include GeneralPrivateMethods
   def show
-    @reservation = Reservation.includes(:user, :stop)
-                              .where(user: { id: params[:user_id] },
-                                     id: params[:id])
+    @reservation = Reservation.joins(:user)
+                              .where('users.uuid = ? && reservations.id = ?',
+                                     params[:user_id], params[:id])
     render json: @reservation
   end
 
   def index
-    @reservations = Reservation.includes(:user, :stop)
-                               .where(user: { id: params[:user_id] })
-    render json: @reservations
+    @reservations = Reservation.joins(:user, :stop, :trip)
+                               .where('users.uuid = ?', params[:user_id])
+    render json: @reservations, except: dates,
+           include: { stop: except_dates, trip: { only: [:date] } }
   end
 
   def create
@@ -36,7 +38,7 @@ class ReservationsController < ApplicationController
 
   def create_reservation(trip)
     @res = Reservation.new
-    @res.user_id = params[:user_id]
+    @res.user_id = User.find_by(uuid: params[:user_id]).id
     @res.stop_id = params[:stop_id]
     @res.trip_id = trip.id
     @res.save
